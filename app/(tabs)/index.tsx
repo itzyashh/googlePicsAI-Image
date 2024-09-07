@@ -1,39 +1,16 @@
 import { Stack } from 'expo-router';
-import { Dimensions, FlatList,StyleSheet, Text, View } from 'react-native';
+import { Dimensions, FlatList, Text, View } from 'react-native';
 
-import { ScreenContent } from '~/components/ScreenContent';
-import * as MediaLibrary from 'expo-media-library';
-import { useEffect, useState } from 'react';
 import { Image } from 'expo-image';
+import { useMedia } from '~/providers/MediaProvider';
 
 
 const ScreenWidth = Dimensions.get('window').width;
 
 export default function Home() {
-  const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
 
-  const [localAssets, setLocalAssets] = useState<MediaLibrary.Asset[]>([]);
+  const {localAssets, loadLocalAssets, hasNextPage} = useMedia();
 
-  useEffect(() => {
-    if (permissionResponse?.status !== 'granted') {
-      requestPermission();
-    }
-
-  }, []);
-
-  useEffect(() => {
-
-    if (permissionResponse?.status === 'granted') {
-      loadLocalAssets();
-    }
-
-  }, [permissionResponse]);
-
-  const loadLocalAssets = async () => {
-    const assetsPage = await MediaLibrary.getAssetsAsync()
-    console.log(JSON.stringify(assetsPage, null, 2));
-    setLocalAssets(assetsPage.assets);
-  }
 
   return (
     <>
@@ -42,6 +19,8 @@ export default function Home() {
         data={localAssets}
         numColumns={4}
         keyExtractor={(item) => item.id}
+        onEndReached={loadLocalAssets}
+        onEndReachedThreshold={0.5}
         columnWrapperClassName='gap-[1px]'
         contentContainerClassName='gap-[1px]'
         renderItem={({ item }) => (
@@ -53,6 +32,7 @@ export default function Home() {
           </View>
         )}
         />
+     { hasNextPage &&  <Text onPress={loadLocalAssets} className='text-center'>Load more</Text>}
         <Text>Total assets: {localAssets.length}</Text>
     </>
   );
