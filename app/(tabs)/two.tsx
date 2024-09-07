@@ -1,14 +1,20 @@
 import { Stack } from 'expo-router';
-import { StyleSheet, View } from 'react-native';
+import { Button, StyleSheet, View } from 'react-native';
 
 import { ScreenContent } from '~/components/ScreenContent';
+import { supabase } from '~/utils/supabase';
 
 export default function Home() {
+
+  const onLogout = () => {
+    supabase.auth.signOut();
+  }
+
   return (
     <>
       <Stack.Screen options={{ title: 'Tab Two' }} />
       <View style={styles.container}>
-        <ScreenContent path="app/(tabs)/two.tsx" title="Tab Two" />
+        <Button title="Logout" onPress={onLogout} />
       </View>
     </>
   );

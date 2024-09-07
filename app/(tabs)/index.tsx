@@ -34,8 +34,6 @@ export default function Home() {
           </Link>
         )}
         />
-     { hasNextPage &&  <Text onPress={loadLocalAssets} className='text-center'>Load more</Text>}
-        <Text>Total assets: {localAssets.length}</Text>
     </>
   );
 }
