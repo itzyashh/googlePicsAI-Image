@@ -1,5 +1,5 @@
-import { Stack } from 'expo-router';
-import { Dimensions, FlatList, Text, View } from 'react-native';
+import { Link, Stack } from 'expo-router';
+import { Dimensions, FlatList, Text, TouchableOpacity, View } from 'react-native';
 
 import { Image } from 'expo-image';
 import { useMedia } from '~/providers/MediaProvider';
@@ -24,12 +24,14 @@ export default function Home() {
         columnWrapperClassName='gap-[1px]'
         contentContainerClassName='gap-[1px]'
         renderItem={({ item }) => (
-          <View style={{}}>
+          <Link href={`/asset?id=${item.id}`} asChild>
+            <TouchableOpacity >
             <Image
               source={{ uri: item.uri }}
               style={{ width: ScreenWidth /4, aspectRatio: 1 }}
-            />
-          </View>
+              />
+              </TouchableOpacity>
+          </Link>
         )}
         />
      { hasNextPage &&  <Text onPress={loadLocalAssets} className='text-center'>Load more</Text>}

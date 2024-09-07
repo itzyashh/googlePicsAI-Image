@@ -7,12 +7,14 @@ interface MediaContextValue {
   localAssets: MediaLibrary.Asset[];
   loadLocalAssets: () => void;
   hasNextPage: boolean;
+  findAsset: (id: string) => MediaLibrary.Asset | undefined;
 }
 
 const MediaContext = createContext<MediaContextValue>({
     localAssets: [],
     loadLocalAssets: () => {},
-    hasNextPage: false
+    hasNextPage: false,
+    findAsset: () => undefined,
 });
 
 const MediaContextProvider = ({ children }: PropsWithChildren) => {
@@ -56,8 +58,12 @@ const MediaContextProvider = ({ children }: PropsWithChildren) => {
     setLoading(false);
   }
 
+  const findAsset = (id: string) => {
+    return localAssets.find(asset => asset.id === id);
+    }
+
     return (
-        <MediaContext.Provider value={{ localAssets, loadLocalAssets, hasNextPage }}>
+        <MediaContext.Provider value={{ localAssets, loadLocalAssets, hasNextPage, findAsset }}>
             {children}
         </MediaContext.Provider>
     )

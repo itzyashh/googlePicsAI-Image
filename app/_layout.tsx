@@ -14,6 +14,13 @@ export default function RootLayout() {
     <Stack>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="asset" options={{ 
+        title: 'Asset',
+        headerTransparent: true,
+        headerTintColor: 'white',
+        headerBlurEffect: 'light',
+        headerBackTitleVisible: false,
+         }} />
     </Stack>
     </MediaContextProvider>
   );
