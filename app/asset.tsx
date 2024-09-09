@@ -9,10 +9,11 @@ const Page = () => {
 
 
     const {id} = useLocalSearchParams<{id: string}>()
-    const {findAsset} = useMedia()
+    const {findAsset, uploadAsset} = useMedia()
     const asset = findAsset(id)
 
-    console.log('asset', asset)
+
+
 
   return (
     <ImageBackground
@@ -21,7 +22,11 @@ const Page = () => {
     style={{ paddingTop: useHeaderHeight()}}
     className='flex-1 items-center justify-center'>
         <Stack.Screen options={{ 
-            headerRight: () => <SimpleLineIcons name='cloud-upload' size={24} color='white' />,
+            headerRight: () => <SimpleLineIcons name='cloud-upload' size={24} color='white' onPress={() =>{
+                if(asset){
+                    uploadAsset?.(asset)
+                }
+            }} />,
          }} />
         <Image
          contentFit='contain'

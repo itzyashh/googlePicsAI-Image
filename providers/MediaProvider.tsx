@@ -1,6 +1,12 @@
 import { createContext, PropsWithChildren, useContext, useEffect, useState} from "react";
 
 import * as MediaLibrary from 'expo-media-library';
+import * as FileSystem from 'expo-file-system';
+import { decode } from 'base64-arraybuffer'
+import { supabase } from "~/utils/supabase";
+import { useAuth } from "./AuthProvider";
+import mime from 'mime';
+
 
 
 interface MediaContextValue {
@@ -8,6 +14,7 @@ interface MediaContextValue {
   loadLocalAssets: () => void;
   hasNextPage: boolean;
   findAsset: (id: string) => MediaLibrary.Asset | undefined;
+  uploadAsset?: (asset: MediaLibrary.Asset) => void;
 }
 
 const MediaContext = createContext<MediaContextValue>({
@@ -15,11 +22,12 @@ const MediaContext = createContext<MediaContextValue>({
     loadLocalAssets: () => {},
     hasNextPage: false,
     findAsset: () => undefined,
+    uploadAsset: () => {},
 });
 
 const MediaContextProvider = ({ children }: PropsWithChildren) => {
 
-
+  const { user } = useAuth();
 
   const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
   const [localAssets, setLocalAssets] = useState<MediaLibrary.Asset[]>([]);
@@ -63,8 +71,26 @@ const MediaContextProvider = ({ children }: PropsWithChildren) => {
     return localAssets.find(asset => asset.id === id);
     }
 
+  const uploadAsset = async (asset: MediaLibrary.Asset) => {
+    const assetInfo = await MediaLibrary.getAssetInfoAsync(asset);
+
+    if (assetInfo.localUri === undefined) {
+      return;
+    }
+    const base64String = await FileSystem.readAsStringAsync(assetInfo.localUri, { encoding: FileSystem.EncodingType.Base64 });
+    const arrayBuffer = decode(base64String);
+
+    await supabase.storage.from('assets')
+    .upload(`${user?.id}/${assetInfo.filename}`, arrayBuffer, {
+      contentType: mime.getType(assetInfo.filename) ?? 'image/jpeg',
+      upsert: true
+    })
+
+  }
+
+
     return (
-        <MediaContext.Provider value={{ localAssets, loadLocalAssets, hasNextPage, findAsset }}>
+        <MediaContext.Provider value={{ localAssets, loadLocalAssets, hasNextPage, findAsset, uploadAsset }}>
             {children}
         </MediaContext.Provider>
     )
