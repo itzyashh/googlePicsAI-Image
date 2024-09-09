@@ -5,6 +5,8 @@ import { useMedia } from '~/providers/MediaProvider'
 import { Image, ImageBackground } from 'expo-image'
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 import { useHeaderHeight } from '@react-navigation/elements'
+import { useAuth } from '~/providers/AuthProvider'
+import { getImagekitUrlFromPath } from '~/lib/imagekit'
 const Page = () => {
 
 
@@ -12,7 +14,11 @@ const Page = () => {
     const {findAsset, uploadAsset} = useMedia()
     const asset = findAsset(id)
 
+    const { user } = useAuth()
+    
+    const imageKitUrl = getImagekitUrlFromPath(`/${user?.id}/${asset?.filename}`, [])
 
+    console.log('imageKitUrl', imageKitUrl)
 
 
   return (

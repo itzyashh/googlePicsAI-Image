@@ -3,6 +3,8 @@ import '../global.css';
 
 import { Stack } from 'expo-router';
 import AuthContextProvider from '~/providers/AuthProvider';
+import 'react-native-url-polyfill/auto'
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
@@ -13,6 +15,7 @@ export default function RootLayout() {
   return (
     <AuthContextProvider>
     <MediaContextProvider>
+      <GestureHandlerRootView>
     <Stack>
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
@@ -24,6 +27,7 @@ export default function RootLayout() {
         headerBackTitleVisible: false,
          }} />
     </Stack>
+    </GestureHandlerRootView>
     </MediaContextProvider>
     </AuthContextProvider>
   );
